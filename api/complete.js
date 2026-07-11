@@ -39,7 +39,7 @@ export default async function handler(req, res) {
   }
   if (!prompt.trim()) return res.status(400).json({ error: 'Missing "prompt".' });
 
-  const model = (process.env.GEMINI_MODEL || 'gemini-1.5-flash').trim();
+  const model = (process.env.GEMINI_MODEL || 'gemini-3.5-flash').trim();
   const url =
     'https://generativelanguage.googleapis.com/v1beta/models/' +
     encodeURIComponent(model) +

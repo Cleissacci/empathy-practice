@@ -54,7 +54,7 @@ export default async function handler(req, res) {
   }
   if (!text) return res.status(400).json({ error: 'Missing "text".' });
 
-  const model = (process.env.GEMINI_TTS_MODEL || 'gemini-2.5-flash-preview-tts').trim();
+  const model = (process.env.GEMINI_TTS_MODEL || 'gemini-3.5-flash').trim();
   const url =
     'https://generativelanguage.googleapis.com/v1beta/models/' +
     encodeURIComponent(model) +
