@@ -1474,7 +1474,10 @@
         } else {
           onChange({ ...st, messages: msgs, ended: true, feedback: fb });
         }
-      } catch (e) { setErr('The feedback didn\u2019t come through \u2014 try ending again.'); }
+      } catch (e) {
+        console.error('Grading failed:', e);
+        setErr('The feedback didn\u2019t come through (' + (e.message || 'try ending again') + ').');
+      }
       setGrading(false);
     }
 
