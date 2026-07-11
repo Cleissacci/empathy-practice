@@ -54,7 +54,7 @@ export default async function handler(req, res) {
   }
   if (!text) return res.status(400).json({ error: 'Missing "text".' });
 
-  const model = (process.env.GEMINI_TTS_MODEL || 'gemini-3.1-flash-tts').trim();
+  const model = (process.env.GEMINI_TTS_MODEL || 'gemini-2.5-flash-preview-tts').trim();
   const url =
     'https://generativelanguage.googleapis.com/v1beta/models/' +
     encodeURIComponent(model) +
@@ -66,7 +66,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text }] }],
+        contents: [{ role: 'user', parts: [{ text: 'Say the following text clearly:\n' + text }] }],
         generationConfig: {
           responseModalities: ['AUDIO'],
           speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
