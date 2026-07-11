@@ -39,7 +39,7 @@ export default async function handler(req, res) {
   }
   if (!prompt.trim()) return res.status(400).json({ error: 'Missing "prompt".' });
 
-  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+  const model = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
   const url =
     'https://generativelanguage.googleapis.com/v1beta/models/' +
     encodeURIComponent(model) +
@@ -70,7 +70,7 @@ export default async function handler(req, res) {
 
     if (!upstream.ok) {
       const msg = (data && data.error && data.error.message) || ('Gemini error ' + upstream.status);
-      return res.status(502).json({ error: msg });
+      return res.status(upstream.status || 502).json({ error: msg });
     }
 
     const cand = data.candidates && data.candidates[0];
