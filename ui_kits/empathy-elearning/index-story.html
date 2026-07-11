@@ -166,6 +166,7 @@ function App() {
   const canSpeak = hasTTS || hasAITTS();
   const NARRATOR_VOICE = 'Sulafat'; // warm, literary — distinct from the character voices
   const narrAudioRef = useRef(null);
+  const narrGenRef = useRef(0); // bumped on every stop, to cancel stale in-flight narration TTS
   const [tocOpen, setTocOpen] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -236,6 +237,7 @@ function App() {
   // ── Voice-over ──
   // Stop any narration in flight, whether the Gemini audio or the browser voice.
   function stopNarration() {
+    narrGenRef.current += 1; // invalidate any narration TTS request still in flight
     if (hasTTS) { try { window.speechSynthesis.cancel(); } catch (e) {} }
     if (narrAudioRef.current) {
       const a = narrAudioRef.current; narrAudioRef.current = null;
@@ -252,9 +254,12 @@ function App() {
     speakTextBrowser(text, onEnd);
   }
   async function speakTextAI(text, onEnd) {
+    const gen = narrGenRef.current; // capture AFTER stopNarration (called by speakText) bumped it
     setSpeaking(true); setPaused(false);
     try {
       const url = await window.claude.tts(text, NARRATOR_VOICE);
+      // A newer narration (or a stop) started while fetching — drop this one.
+      if (narrGenRef.current !== gen) { try { URL.revokeObjectURL(url); } catch (e) {} return; }
       if (muted) { try { URL.revokeObjectURL(url); } catch (e) {} setSpeaking(false); return; }
       const a = new Audio(url);
       narrAudioRef.current = a;
@@ -268,6 +273,7 @@ function App() {
       a.onerror = () => done(true);
       a.play().catch(() => { done(false); speakTextBrowser(text, onEnd); }); // autoplay blocked, etc.
     } catch (e) {
+      if (narrGenRef.current !== gen) return; // superseded — let the newer narration own it
       setSpeaking(false);
       speakTextBrowser(text, onEnd); // network / API failure — use the browser voice
     }

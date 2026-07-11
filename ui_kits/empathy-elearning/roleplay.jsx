@@ -925,6 +925,7 @@
     const keepAliveRef = React.useRef(null);
     const ringRef = React.useRef(null);
     const aiAudioRef = React.useRef(null); // <audio> element for the Gemini TTS voice
+    const aiGenRef = React.useRef(0); // bumped on every stop, to cancel stale in-flight TTS
     // When the page is embedded in a frame that denies the mic (e.g. the in-app
     // preview pane), direct SpeechRecognition can't work — but a popup window is
     // a top-level context the block doesn't apply to. We capture voice there and
@@ -969,6 +970,7 @@
     React.useEffect(() => { voiceOffRef.current = voiceOff; }, [voiceOff]);
 
     function stopSpeak() {
+      aiGenRef.current += 1; // invalidate any TTS request still in flight
       if (hasTTS) { try { window.speechSynthesis.cancel(); } catch (e) {} }
       if (aiAudioRef.current) {
         const a = aiAudioRef.current; aiAudioRef.current = null;
@@ -987,10 +989,13 @@
     }
     async function speakAI(text) {
       stopSpeak();
+      const gen = aiGenRef.current; // capture AFTER stopSpeak bumped it
       if (voiceOffRef.current) return;
       setSpeaking(true);
       try {
         const url = await window.claude.tts(text, voiceForCharacter(slide.character));
+        // A newer line (or a stop) started while we were fetching — drop this one.
+        if (aiGenRef.current !== gen) { try { URL.revokeObjectURL(url); } catch (e) {} return; }
         if (voiceOffRef.current) { try { URL.revokeObjectURL(url); } catch (e) {} setSpeaking(false); return; }
         const a = new Audio(url);
         aiAudioRef.current = a;
@@ -1003,6 +1008,7 @@
         a.onerror = () => { done(); speakBrowser(text); }; // fall back if playback fails
         a.play().catch(() => { done(); speakBrowser(text); }); // autoplay blocked, etc.
       } catch (e) {
+        if (aiGenRef.current !== gen) return; // superseded — let the newer line own it
         setSpeaking(false);
         speakBrowser(text); // network / API failure — use the browser voice
       }

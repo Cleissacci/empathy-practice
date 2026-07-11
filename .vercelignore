@@ -1,6 +1,7 @@
 # Editor/agent state and duplicates — not needed to run the course.
+# NOTE: .image-slots.state.json is intentionally NOT ignored — image-slot.js
+# fetches it at runtime for images that aren't in the baked-in seed (e.g. the
+# roleplay call portraits). Excluding it makes those images show as placeholders.
 .thumbnail
-.image-slots.state.json
-**/.image-slots.state.json
 The Empathy Practice copy.html
 _adherence.oxlintrc.json
