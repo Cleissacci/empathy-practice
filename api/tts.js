@@ -11,7 +11,7 @@
 //
 // Env vars:
 //   GEMINI_API_KEY   (required)  same key as api/complete.js
-//   GEMINI_TTS_MODEL (optional)  defaults to "gemini-2.5-flash-preview-tts"
+//   GEMINI_TTS_MODEL (optional)  defaults to "gemini-3.1-flash-tts"
 // ════════════════════════════════════════════════════════════════
 
 function pcmToWav(pcm, sampleRate, channels, bitsPerSample) {
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
   }
   if (!text) return res.status(400).json({ error: 'Missing "text".' });
 
-  const model = (process.env.GEMINI_TTS_MODEL || 'gemini-3.5-flash').trim();
+  const model = (process.env.GEMINI_TTS_MODEL || 'gemini-3.1-flash-tts').trim();
   const url =
     'https://generativelanguage.googleapis.com/v1beta/models/' +
     encodeURIComponent(model) +

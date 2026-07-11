@@ -13,7 +13,7 @@
 //
 // Env vars (set in Vercel → Project → Settings → Environment Variables):
 //   GEMINI_API_KEY  (required)  your Google AI Studio / Gemini API key
-//   GEMINI_MODEL    (optional)  defaults to "gemini-2.0-flash"
+//   GEMINI_MODEL    (optional)  defaults to "gemini-3.5-flash"
 // ════════════════════════════════════════════════════════════════
 
 export default async function handler(req, res) {
@@ -61,7 +61,7 @@ export default async function handler(req, res) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 2048 },
+        generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
         safetySettings,
       }),
     });
