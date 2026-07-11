@@ -44,7 +44,15 @@
     let s = String(raw).trim().replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
     const a = s.indexOf('{'), b = s.lastIndexOf('}');
     if (a !== -1 && b !== -1) s = s.slice(a, b + 1);
-    return JSON.parse(s);
+    try {
+      return JSON.parse(s);
+    } catch (e) {
+      try {
+        return (new Function('return (' + s + ')'))();
+      } catch (e2) {
+        throw e;
+      }
+    }
   }
   function transcriptOf(slide, messages, who) {
     const name = slide.character.name;
