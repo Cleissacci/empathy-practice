@@ -55,13 +55,19 @@ export default async function handler(req, res) {
     'HARM_CATEGORY_DANGEROUS_CONTENT',
   ].map((category) => ({ category, threshold: 'BLOCK_ONLY_HIGH' }));
 
+  const jsonMode = prompt.includes('JSON');
+
   try {
     const upstream = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7, maxOutputTokens: 512 },
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 512,
+          ...(jsonMode ? { responseMimeType: 'application/json' } : {}),
+        },
         safetySettings,
       }),
     });
