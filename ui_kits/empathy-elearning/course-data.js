@@ -105,7 +105,7 @@ window.COURSE = (function () {
 
     // MODULE 1
     { id: 'm1_div', type: 'section', section: 'Module 1', n: 'Module 01', title: 'Introduction to Empathy', icon: 'Heart',
-      photo: { id: 'photo-m1', hint: 'Two people in warm conversation' },
+      photo: { id: 'photo-m1', src: 'assets/images/photo_m1.png', hint: 'Two people in warm conversation' },
       blurb: 'What empathy is — and what it isn\u2019t.' },
     { id: 'm1_c1', type: 'content', section: 'Module 1', eyebrow: 'Module 01 · Introduction',
       title: 'Three words we confuse', sub: 'Sympathy, empathy, compassion',
@@ -129,7 +129,7 @@ window.COURSE = (function () {
 
     // MODULE 2
     { id: 'm2_div', type: 'section', section: 'Module 2', n: 'Module 02', title: 'The Neuroscience of Connection', icon: 'Brain',
-      photo: { id: 'photo-m2', hint: 'Faces attuned to each other' },
+      photo: { id: 'photo-m2', src: 'assets/images/photo_m2.png', hint: 'Faces attuned to each other' },
       blurb: 'How the social brain attunes us to one another.' },
     { id: 'm2_c1', type: 'content', section: 'Module 2', eyebrow: 'Module 02 · Neuroscience',
       title: 'The social brain', sub: 'We are wired to attune',
@@ -154,7 +154,7 @@ window.COURSE = (function () {
 
     // MODULE 3
     { id: 'm3_div', type: 'section', section: 'Module 3', n: 'Module 03', title: 'Perspective Taking', icon: 'Eye',
-      photo: { id: 'photo-m3', hint: 'Someone seeing from another\u2019s view' },
+      photo: { id: 'photo-m3', src: 'assets/images/photo_m3.png', hint: 'Someone seeing from another’s view' },
       blurb: 'Stepping into another person\u2019s frame of reference.' },
     { id: 'm3_c1', type: 'content', section: 'Module 3', eyebrow: 'Module 03 · Perspective Taking',
       title: 'What does it mean to truly listen?', sub: 'Attention comes before words',
@@ -196,7 +196,7 @@ window.COURSE = (function () {
 
     // MODULE 4
     { id: 'm4_div', type: 'section', section: 'Module 4', n: 'Module 04', title: 'Active Listening', icon: 'Mic',
-      photo: { id: 'photo-m4', hint: 'One person listening intently' },
+      photo: { id: 'photo-m4', src: 'assets/images/photo_m4.png', hint: 'One person listening intently' },
       blurb: 'The practical habits of genuine presence.' },
     { id: 'm4_c1', type: 'content', section: 'Module 4', eyebrow: 'Module 04 · Active Listening',
       title: 'Listening to understand', sub: 'Not listening to reply',
@@ -224,7 +224,7 @@ window.COURSE = (function () {
 
     // MODULE 5
     { id: 'm5_div', type: 'section', section: 'Module 5', n: 'Module 05', title: 'Difficult Conversations', icon: 'Dialogue',
-      photo: { id: 'photo-m5', hint: 'A hard but caring exchange' },
+      photo: { id: 'photo-m5', src: 'assets/images/photo_m5.png', hint: 'A hard but caring exchange' },
       blurb: 'Staying connected when the stakes are high.' },
     { id: 'm5_c1', type: 'content', section: 'Module 5', eyebrow: 'Module 05 · Difficult Conversations',
       title: 'Regulate, then relate', sub: 'You cannot offer what you don\u2019t have',
@@ -245,7 +245,7 @@ window.COURSE = (function () {
 
     // CAPSTONE — bring every practised skill together in one real conversation
     { id: 'cap_div', type: 'section', section: 'Capstone', variant: 'quiz', n: 'Capstone', icon: 'Award',
-      photo: { id: 'photo-cap', hint: 'Two colleagues in a real, hard conversation' },
+      photo: { id: 'photo-cap', src: 'assets/images/photo_cap.png', hint: 'Two colleagues in a real, hard conversation' },
       title: 'The Capstone', blurb: 'One real conversation that asks for everything you’ve practised.' },
     { id: 'capstone', type: 'capstone', section: 'Capstone', gate: true, capstone: true, passing: 70,
       eyebrow: 'A conversation that matters',

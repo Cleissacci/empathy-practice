@@ -1232,7 +1232,7 @@
             {(speaking || !connected) && <span className="rp-call-ring" style={{ position: 'absolute', inset: -8, borderRadius: '50%', border: '2px solid var(--color-accent-light)' }} />}
             {React.createElement('image-slot', {
               id: 'rp-portrait-' + (c.name || 'partner'),
-              src: slide.photoSrc || undefined, shape: 'circle', fit: 'cover',
+              src: slide.photoSrc || ('assets/images/portrait_' + String(c.name || 'partner').toLowerCase() + '.png'), shape: 'circle', fit: 'cover',
               placeholder: (c.name || 'Add a') + '\u2019s photo',
               style: { width: 132, height: 132, display: 'block', borderRadius: '50%', boxShadow: '0 0 0 3px rgba(247,244,240,0.14)' },
             })}

@@ -69,7 +69,7 @@
   function Cover({ meta, onStart, resumed, story, storyData, onToggleStory, name, onName }) {
     const sd = storyData || {};
     return (
-      <TealStage bg={<RippleMotif bare glow={false} size={560} opacity={0.5} rings={[1, 0.76, 0.54, 0.34]} />} photo={<PhotoLayer id="cover-photo" hint="Drop a cover photograph (optional)" />}>
+      <TealStage bg={<RippleMotif bare glow={false} size={560} opacity={0.5} rings={[1, 0.76, 0.54, 0.34]} />} photo={<PhotoLayer id="cover-photo" src="assets/images/cover.png" hint="Drop a cover photograph (optional)" />}>
         <div style={{ marginBottom: 'clamp(20px,4vh,40px)' }}><Logo variant="reversed" size={40} /></div>
         <div style={{ color: 'var(--color-accent-light)', fontSize: 13, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: 18 }}>{story ? sd.eyebrow : 'Empathy Course · Module'}</div>
         <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 300, color: 'var(--color-text-inverse)', lineHeight: 1.16, margin: 0, fontSize: 'clamp(38px, 6.5vw, 70px)' }}>{meta.title}</h1>
