@@ -1,0 +1,68 @@
+<!-- @dsCard group="Components" viewport="700x460" name="Forms — Inputs & Controls" subtitle="Text fields, select, checkbox, radio, toggle" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; background: var(--color-bg); font-family: var(--font-body); padding: 28px; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .stack { display: flex; flex-direction: column; gap: 18px; }
+  .lbl { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-muted); font-family: var(--font-mono); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { Input, Textarea, Select, Checkbox, Radio, Toggle } = window.LuminaDesignSystem_f39716;
+
+function Demo() {
+  const [agree, setAgree] = React.useState(true);
+  const [news, setNews] = React.useState(false);
+  const [contact, setContact] = React.useState('email');
+  const [reminders, setReminders] = React.useState(true);
+  const [reports, setReports] = React.useState(false);
+  return (
+    <div className="cols">
+      <div className="stack">
+        <div className="lbl">Text inputs</div>
+        <Input label="Your name" required placeholder="First and last name" />
+        <Input label="Email address" defaultValue="mir@lumina.com" hint="We'll send your session confirmation here." />
+        <Input label="Session preference" defaultValue="morning" error="Please select from available time slots below." />
+        <Input label="Referral code" defaultValue="EMPATHY2025" success="Code applied — 20% off your first session." />
+      </div>
+      <div className="stack">
+        <div className="lbl">Select, textarea & controls</div>
+        <Select label="Area of focus" defaultValue="empathy">
+          <option value="empathy">Empathy & Active Listening</option>
+          <option value="regulation">Emotional Regulation</option>
+          <option value="perspective">Perspective Taking</option>
+        </Select>
+        <Textarea label="Reflection notes" placeholder="What came up for you today? There are no wrong answers." hint="Your reflections are private and encrypted." />
+        <div>
+          <div className="lbl">Preferred contact</div>
+          <div className="stack" style={{ gap: 10 }}>
+            <Radio name="c" value="email" checked={contact==='email'} onChange={()=>setContact('email')} label="Email — gentle nudges only" />
+            <Radio name="c" value="sms" checked={contact==='sms'} onChange={()=>setContact('sms')} label="SMS — session reminders" />
+          </div>
+        </div>
+        <div className="stack" style={{ gap: 10 }}>
+          <Checkbox checked={agree} onChange={e=>setAgree(e.target.checked)} label="I agree to the privacy policy" />
+          <Checkbox checked={news} onChange={e=>setNews(e.target.checked)} label="Subscribe to course newsletter" />
+        </div>
+        <div className="stack" style={{ gap: 10 }}>
+          <Toggle on={reminders} onChange={setReminders} label="Daily reflection reminders" />
+          <Toggle on={reports} onChange={setReports} label="Weekly progress reports" />
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script>
+</body>
+</html>

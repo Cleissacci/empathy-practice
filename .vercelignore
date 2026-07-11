@@ -1,0 +1,6 @@
+# Editor/agent state and duplicates — not needed to run the course.
+.thumbnail
+.image-slots.state.json
+**/.image-slots.state.json
+The Empathy Practice copy.html
+_adherence.oxlintrc.json

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the Empathy Course Was Built — Lumina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Nunito:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#F7F4F0; --white:#FFFFFF; --forest:#1A2E35;
+    --teal:#2A5C6B; --amber:#C4956A; --rose:#C47878;
+    --teal-subtle:rgba(42,92,107,.07); --amber-subtle:rgba(196,149,106,.13);
+    --border:rgba(26,46,53,.11); --muted:rgba(26,46,53,.62);
+    --shadow-sm:0 1px 3px rgba(26,46,53,.08);
+    --shadow-md:0 6px 22px rgba(26,46,53,.07), 0 1px 3px rgba(26,46,53,.06);
+    --serif:'Cormorant Garamond',Georgia,serif;
+    --sans:'Nunito',-apple-system,BlinkMacSystemFont,sans-serif;
+    --mono:'DM Mono',ui-monospace,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--ivory);color:var(--forest);font-family:var(--sans);line-height:1.65;-webkit-font-smoothing:antialiased;}
+  .page{max-width:880px;margin:0 auto;padding:72px 32px 96px;}
+
+  /* eyebrow */
+  .eyebrow{font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);}
+
+  /* header */
+  header{text-align:center;margin-bottom:18px;}
+  .mark{width:46px;height:46px;margin:0 auto 22px;display:block;}
+  header h1{font-family:var(--serif);font-weight:300;font-size:clamp(40px,6vw,62px);line-height:1.08;letter-spacing:-.01em;margin:14px 0 0;}
+  header h1 em{font-style:italic;color:var(--teal);}
+  header .lede{font-size:18px;color:var(--muted);max-width:60ch;margin:18px auto 0;text-wrap:pretty;}
+  .wave{display:block;margin:34px auto 0;width:320px;max-width:80%;opacity:.9;}
+
+  .note{max-width:62ch;margin:40px auto 0;padding:16px 20px;background:var(--teal-subtle);border-left:3px solid var(--teal);border-radius:10px;font-size:14.5px;color:var(--forest);}
+  .note strong{color:var(--teal);}
+
+  /* timeline */
+  .flow{position:relative;margin-top:58px;padding-left:64px;}
+  .flow::before{content:"";position:absolute;left:23px;top:8px;bottom:40px;width:2px;background:linear-gradient(var(--teal),var(--amber));opacity:.45;}
+
+  .phase{position:relative;margin-bottom:30px;}
+  .phase:last-child{margin-bottom:0;}
+  .node{position:absolute;left:-64px;top:0;width:48px;height:48px;border-radius:50%;background:var(--white);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:500;font-size:22px;color:var(--teal);box-shadow:var(--shadow-sm);z-index:2;}
+  .phase:last-child .node{border-color:var(--amber);color:var(--amber);}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-md);padding:28px 30px 26px;}
+  .card .tag{font-family:var(--sans);font-weight:700;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);}
+  .card h2{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.12;letter-spacing:-.005em;margin:7px 0 4px;}
+
+  .block{margin-top:20px;}
+  .block .lbl{display:flex;align-items:center;gap:8px;font-family:var(--sans);font-weight:700;font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);margin-bottom:9px;}
+  .block .lbl::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal);flex:none;}
+
+  .ask{font-family:var(--serif);font-style:italic;font-size:21px;line-height:1.4;color:var(--forest);}
+
+  ol.steps{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:10px;}
+  ol.steps li{counter-increment:s;position:relative;padding-left:30px;font-size:15px;color:var(--forest);}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:20px;height:20px;border-radius:50%;background:var(--teal-subtle);color:var(--teal);font-family:var(--mono);font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:500;}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{font-family:var(--mono);font-size:12px;color:var(--teal);background:var(--teal-subtle);border:1px solid var(--border);border-radius:999px;padding:5px 12px;}
+  .chip.out{color:var(--amber);background:var(--amber-subtle);border-color:rgba(196,149,106,.28);}
+
+  footer{margin-top:64px;text-align:center;}
+  footer .wave{margin-top:0;margin-bottom:22px;}
+  footer p{font-size:13.5px;color:var(--muted);}
+  footer .meta{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:8px;letter-spacing:.02em;}
+
+  @media (max-width:560px){
+    .page{padding:48px 18px 64px;}
+    .flow{padding-left:48px;}
+    .flow::before{left:15px;}
+    .node{left:-48px;width:34px;height:34px;font-size:16px;}
+    .card{padding:22px 20px;}
+    .card h2{font-size:25px;}
+  }
+  @media print{
+    body{background:#fff;}
+    .card{box-shadow:none;break-inside:avoid;}
+    .phase{break-inside:avoid;}
+    .flow::before{background:var(--teal);}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <svg class="mark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Lumina mark">
+      <circle cx="24" cy="24" r="23" stroke="#2A5C6B" stroke-width="1.5"></circle>
+      <path d="M8 24 C11 20, 14 16, 17 24 C20 32, 23 28, 24 24 C25 20, 28 16, 31 24 C34 32, 37 28, 40 24" stroke="#C4956A" stroke-width="2" stroke-linecap="round" fill="none"></path>
+      <circle cx="24" cy="24" r="3" fill="#2A5C6B"></circle>
+    </svg>
+    <p class="eyebrow">Build process — prompt to product</p>
+    <h1>How the <em>Empathy Course</em><br>came to be</h1>
+    <p class="lede">The journey from the first ask to the finished, shareable course — and the work behind each step.</p>
+    <svg class="wave" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M0 40 C20 40, 30 15, 60 40 C90 65, 100 40, 130 40 C160 40, 170 15, 200 40 C230 65, 240 40, 270 40 C300 40, 310 15, 340 40 C370 65, 380 40, 400 40" stroke="#2A5C6B" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.5"></path>
+      <path d="M0 40 C20 40, 30 20, 60 40 C90 60, 100 40, 130 40 C160 40, 170 20, 200 40 C230 60, 240 40, 270 40 C300 40, 310 20, 340 40 C370 60, 380 40, 400 40" stroke="#C4956A" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"></path>
+    </svg>
+    <p class="note">This flow is reconstructed from the project's artifacts and design notes — it traces the actual order in which the work was built, from grounding the brand through to the offline-ready course exports. Each phase pairs <strong>the ask</strong> with <strong>how it was addressed</strong> and <strong>what shipped</strong>.</p>
+  </header>
+
+  <div class="flow">
+
+    <!-- 01 -->
+    <section class="phase">
+      <div class="node">1</div>
+      <div class="card">
+        <p class="tag">Foundations</p>
+        <h2>Ground the brand</h2>
+        <div class="block">
+          <p class="lbl">The ask</p>
+          <p class="ask">"Turn the Lumina Psychology brand style guide into a design system we can build everything else on."</p>
+        </div>
+        <div class="block">
+          <p class="lbl">How it was addressed</p>
+          <ol class="steps">
+            <li>Read the authored brand style guide as the single source of truth.</li>
+            <li>Extracted color, type, spacing, and elevation into design tokens.</li>
+            <li>Codified the voice (warm, grounded, clear) and visual rules — ivory base, no pure white, no emoji.</li>
+            <li>Wrote one import-only entry point so any file links a single stylesheet.</li>
+          </ol>
+        </div>
+        <div class="block">
+          <p class="lbl">What shipped</p>
+          <div class="chips">
+            <span class="chip out">styles.css</span>
+            <span class="chip out">tokens/colors · type · spacing · elevation</span>
+            <span class="chip out">readme.md · SKILL.md</span>
+            <span class="chip out">logo + breath-wave assets</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="phase">
+      <div class="node">2</div>
+      <div class="card">
+        <p class="tag">Component library</p>
+        <h2>Build the reusable parts</h2>
+        <div class="block">
+          <p class="lbl">The ask</p>
+          <p class="ask">"Make on-brand, reusable UI components so screens stay consistent."</p>
+        </div>
+        <div class="block">
+          <p class="lbl">How it was addressed</p>
+          <ol class="steps">
+            <li>Authored primitives across core, forms, feedback, and brand families.</li>
+            <li>Compiled them into one bundle exposed on a shared namespace.</li>
+            <li>Wrote foundation specimen cards so the system is browsable in the Design System tab.</li>
+          </ol>
+        </div>
+        <div class="block">
+          <p class="lbl">What shipped</p>
+          <div class="chips">
+            <span class="chip">Button · IconButton · Badge · Avatar</span>
+            <span class="chip">Card · StatCard</span>
+            <span class="chip">Input · Textarea · Select · Checkbox · Radio · Toggle</span>
+            <span class="chip">Alert · ProgressBar</span>
+            <span class="chip">Logo · BreathWave</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="phase">
+      <div class="node">3</div>
+      <div class="card">
+        <p class="tag">Learner app</p>
+        <h2>Recreate the course platform</h2>
+        <div class="block">
+          <p class="lbl">The ask</p>
+          <p class="ask">"Recreate the Empathy Course learner experience as a working app."</p>
+        </div>
+        <div class="block">
+          <p class="lbl">How it was addressed</p>
+          <ol class="steps">
+            <li>Mapped the core flow: sign in → dashboard → module → reflection.</li>
+            <li>Composed it from the component library plus a curated Lucide icon set and course data.</li>
+            <li>Built the surrounding chrome — sidebar navigation and per-screen layouts.</li>
+          </ol>
+        </div>
+        <div class="block">
+          <p class="lbl">What shipped</p>
+          <div class="chips">
+            <span class="chip out">ui_kits/empathy-course/</span>
+            <span class="chip">LoginScreen · DashboardScreen</span>
+            <span class="chip">ModuleScreen · Sidebar</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section class="phase">
+      <div class="node">4</div>
+      <div class="card">
+        <p class="tag">Course module</p>
+        <h2>Author the self-paced player</h2>
+        <div class="block">
+          <p class="lbl">The ask</p>
+          <p class="ask">"Build a standalone, linear e-learning module — an Articulate/Rise-style storyboard."</p>
+        </div>
+        <div class="block">
+          <p class="lbl">How it was addressed</p>
+          <ol class="steps">
+            <li>Storyboarded a 31-slide arc: cover → objectives → agenda → five modules → knowledge check → results → summary → completion.</li>
+            <li>Built the player engine — linear Back/Continue nav, arrow keys, a top progress bar and slide counter.</li>
+            <li>Persisted all state (position, answers, reflections) to localStorage so progress survives a refresh.</li>
+          </ol>
+        </div>
+        <div class="block">
+          <p class="lbl">What shipped</p>
+          <div class="chips">
+            <span class="chip out">ui_kits/empathy-elearning/</span>
+            <span class="chip">index — player engine</span>
+            <span class="chip">course-data.js · slides.jsx</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="phase">
+      <div class="node">5</div>
+      <div class="card">
+        <p class="tag">Interactions &amp; assessment</p>
+        <h2>Make every module active</h2>
+        <div class="block">
+          <p class="lbl">The ask</p>
+          <p class="ask">"Make learners do the work — interactive activities, and a real check on understanding."</p>
+        </div>
+        <div class="block">
+          <p class="lbl">How it was addressed</p>
+          <ol class="steps">
+            <li>Built tabs, learn-more hotspots (with narration), and drag-and-drop with a tap-to-assign fallback.</li>
+            <li>Replaced open journaling with applied scenarios that test each module's empathy "device."</li>
+            <li>Gated Continue until each activity is done; added a scored 5-question check with an 80% pass and a try-again reset.</li>
+            <li>Generated a completion certificate to PNG on a canvas — works offline — and a facilitator answer key.</li>
+          </ol>
+        </div>
+        <div class="block">
+          <p class="lbl">What shipped</p>
+          <div class="chips">
+            <span class="chip">interactions.jsx · roleplay.jsx</span>
+            <span class="chip">gating + scored quiz</span>
+            <span class="chip out">Facilitator Answer Key.html</span>
+            <span class="chip out">certificate (PNG)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 -->
+    <section class="phase">
+      <div class="node">6</div>
+      <div class="card">
+        <p class="tag">Delivery</p>
+        <h2>Package it to share</h2>
+        <div class="block">
+          <p class="lbl">The ask</p>
+          <p class="ask">"Make it easy to hand off — something that opens anywhere, even offline."</p>
+        </div>
+        <div class="block">
+          <p class="lbl">How it was addressed</p>
+          <ol class="steps">
+            <li>Bundled the course and the learner app into single-file HTML exports.</li>
+            <li>Inlined every asset so each file opens standalone with no server or network.</li>
+            <li>Kept the brand splash and graceful no-JavaScript fallback on each export.</li>
+          </ol>
+        </div>
+        <div class="block">
+          <p class="lbl">What shipped</p>
+          <div class="chips">
+            <span class="chip out">The Empathy Practice.html</span>
+            <span class="chip out">Lumina Empathy Course.html</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <svg class="wave" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M0 40 C20 40, 30 15, 60 40 C90 65, 100 40, 130 40 C160 40, 170 15, 200 40 C230 65, 240 40, 270 40 C300 40, 310 15, 340 40 C370 65, 380 40, 400 40" stroke="#2A5C6B" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.5"></path>
+      <path d="M0 40 C20 40, 30 20, 60 40 C90 60, 100 40, 130 40 C160 40, 170 20, 200 40 C230 60, 240 40, 270 40 C300 40, 310 20, 340 40 C370 60, 380 40, 400 40" stroke="#C4956A" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"></path>
+    </svg>
+    <p>From a brand style guide to a finished, shareable course — built in six phases.</p>
+    <p class="meta">Lumina Psychology · The Empathy Practice · build process flow</p>
+  </footer>
+
+</div>
+</body>
+</html>

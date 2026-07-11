@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina · Voice</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(180deg, #2c2723 0%, #1d1916 100%);
+    color: #f7f4f0; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 16px; padding: 20px; text-align: center;
+  }
+  .ring {
+    width: 84px; height: 84px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; background: rgba(247,244,240,0.1); position: relative;
+    transition: background .2s;
+  }
+  .ring.live { background: #c4664e; }
+  .ring.live::after {
+    content: ""; position: absolute; inset: -8px; border-radius: 50%;
+    border: 2px solid rgba(196,102,78,0.7); animation: pulse 1.4s ease-out infinite;
+  }
+  @keyframes pulse { 0%{transform:scale(1);opacity:.8} 100%{transform:scale(1.35);opacity:0} }
+  svg { width: 34px; height: 34px; }
+  #status { font-size: 13px; font-weight: 700; letter-spacing: .03em; min-height: 18px; }
+  #interim { font-size: 13px; line-height: 1.4; color: rgba(247,244,240,0.7); font-style: italic; min-height: 34px; max-width: 300px; }
+  #hint { font-size: 11.5px; color: rgba(247,244,240,0.45); line-height: 1.4; max-width: 300px; }
+  button {
+    border: none; cursor: pointer; font: inherit; font-weight: 700; font-size: 13px;
+    padding: 9px 20px; border-radius: 999px; background: #f7f4f0; color: #1d1916;
+  }
+  button.stop { background: #c4664e; color: #fff; }
+  .err { color: #e8a08e; font-size: 12.5px; line-height: 1.45; max-width: 300px; }
+</style>
+</head>
+<body>
+  <div class="ring" id="ring">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#1d1916" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="icon">
+      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/>
+    </svg>
+  </div>
+  <div id="status">Starting…</div>
+  <div id="interim"></div>
+  <button id="toggle" style="display:none">Tap to talk</button>
+  <div id="hint">Allow the microphone if your browser asks. Keep this little window open while you talk — your words go straight into the call.</div>
+
+  <script>
+  (function () {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var ring = document.getElementById('ring');
+    var icon = document.getElementById('icon');
+    var statusEl = document.getElementById('status');
+    var interimEl = document.getElementById('interim');
+    var toggle = document.getElementById('toggle');
+    var hint = document.getElementById('hint');
+
+    function post(msg) {
+      try { if (window.opener && !window.opener.closed) window.opener.postMessage(Object.assign({ t: 'lumina-mic' }, msg), '*'); } catch (e) {}
+    }
+    function fail(txt) {
+      statusEl.textContent = 'Mic unavailable';
+      interimEl.innerHTML = '<span class="err">' + txt + '</span>';
+      ring.classList.remove('live');
+      toggle.style.display = 'none';
+    }
+
+    if (!SR) { fail('This browser has no speech recognition. Use Chrome or Edge, or type your reply in the call.'); post({ k: 'error', error: 'no-sr' }); return; }
+
+    var rec = null, want = false, finalText = '', listening = false, netRetry = 0;
+
+    function setLive(on) {
+      listening = on;
+      ring.classList.toggle('live', on);
+      icon.setAttribute('stroke', on ? '#fff' : '#1d1916');
+      statusEl.textContent = on ? 'Listening…' : 'Tap to talk';
+      toggle.textContent = on ? 'Tap to send' : 'Tap to talk';
+      toggle.className = on ? 'stop' : '';
+    }
+
+    function makeRec() {
+      var r = new SR();
+      r.lang = 'en-US'; r.interimResults = true; r.continuous = true; r.maxAlternatives = 1;
+      r.onstart = function () { setLive(true); post({ k: 'listening' }); hint.style.display = 'none'; };
+      r.onresult = function (e) {
+        var live = '';
+        for (var i = e.resultIndex; i < e.results.length; i++) {
+          var res = e.results[i];
+          if (res.isFinal) finalText += res[0].transcript + ' ';
+          else live += res[0].transcript;
+        }
+        var full = (finalText + live).trim();
+        interimEl.textContent = full ? '“' + full + '”' : '';
+        post({ k: 'interim', text: full });
+      };
+      r.onerror = function (ev) {
+        var err = ev && ev.error;
+        if (err === 'no-speech' || err === 'aborted') return;
+        if (err === 'network') {
+          netRetry++;
+          if (want && netRetry <= 2) { try { r.start(); return; } catch (e) {} }
+          want = false; setLive(false);
+          fail('Couldn’t reach the voice service. Check your connection and tap to talk again.');
+          post({ k: 'error', error: 'network' });
+          return;
+        }
+        want = false; setLive(false);
+        if (err === 'not-allowed' || err === 'service-not-allowed') {
+          fail('Microphone access was blocked. Click the mic icon in this window’s address bar to allow it, then tap to talk.');
+          post({ k: 'error', error: 'not-allowed' });
+        } else {
+          fail('Voice hit a snag. Tap to talk to try again.');
+          post({ k: 'error', error: err || 'unknown' });
+        }
+      };
+      r.onend = function () {
+        if (want) { try { r.start(); return; } catch (e) {} }
+        setLive(false);
+        var t = finalText.trim();
+        interimEl.textContent = '';
+        statusEl.textContent = 'Sent ✓';
+        post({ k: 'final', text: t });
+        finalText = '';
+      };
+      return r;
+    }
+
+    function start() {
+      if (want) return;
+      finalText = ''; netRetry = 0; interimEl.textContent = '';
+      rec = makeRec(); want = true;
+      try { rec.start(); } catch (e) { want = false; setLive(false); }
+    }
+    function stop() { want = false; if (rec) { try { rec.stop(); } catch (e) {} } }
+
+    toggle.style.display = '';
+    toggle.addEventListener('click', function () { if (listening) stop(); else start(); });
+
+    // Commands from the call window (parent).
+    window.addEventListener('message', function (e) {
+      var d = e.data;
+      if (!d || d.t !== 'lumina-mic-cmd') return;
+      if (d.k === 'start') start();
+      else if (d.k === 'stop') stop();
+      else if (d.k === 'bye') { stop(); setTimeout(function () { try { window.close(); } catch (x) {} }, 120); }
+    });
+
+    window.addEventListener('beforeunload', function () { post({ k: 'closed' }); });
+
+    post({ k: 'ready' });
+    // Auto-start so the very first tap in the call begins listening immediately.
+    start();
+  })();
+  </script>
+</body>
+</html>

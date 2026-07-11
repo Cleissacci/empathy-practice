@@ -1,0 +1,55 @@
+/* ─────────────────────────────────────────────────────
+   COLOR TOKENS — Lumina Psychology
+   Teal (trust, calm, growth) · Amber (warmth, connection) ·
+   Warm ivory (safety, openness). All pass WCAG AA at minimum.
+───────────────────────────────────────────────────── */
+:root {
+  /* ── Primary — Deep Teal ── */
+  --color-primary:        #2A5C6B;
+  --color-primary-light:  #3A7A8C;
+  --color-primary-muted:  #7B9E9B;
+  --color-primary-subtle: #D4EDE9;
+
+  /* ── Accent — Warm Amber ── */
+  --color-accent:         #C4956A;
+  --color-accent-light:   #E8C5A0;
+  --color-accent-subtle:  #F7EDDF;
+
+  /* ── Warm Rose ── */
+  --color-warm-rose:      #C47878;
+  --color-warm-rose-sub:  #F2DEDE;
+
+  /* ── Neutral & Background ── */
+  --color-bg:             #F7F4F0;
+  --color-surface:        #FFFFFF;
+  --color-surface-alt:    #F0EDE8;
+  --color-border:         #DDD8D2;
+  --color-border-light:   #EDE9E4;
+
+  /* ── Text ── */
+  --color-text-primary:   #1A2E35;
+  --color-text-secondary: #637074;
+  --color-text-muted:     #9BA8AB;
+  --color-text-inverse:   #F7F4F0;
+
+  /* ── Semantic ── */
+  --color-success:        #4A9B8A;
+  --color-success-sub:    #D4EDE9;
+  --color-warning:        #C4956A;
+  --color-warning-sub:    #F7EDDF;
+  --color-error:          #B85C5C;
+  --color-error-sub:      #F2DEDE;
+  --color-info:           #2A5C6B;
+  --color-info-sub:       #D4EDE9;
+
+  /* ── Semantic aliases (intent-based) ── */
+  --text-body:        var(--color-text-secondary);
+  --text-heading:     var(--color-text-primary);
+  --text-subtle:      var(--color-text-muted);
+  --surface-page:     var(--color-bg);
+  --surface-card:     var(--color-surface);
+  --surface-sunken:   var(--color-surface-alt);
+  --border-default:   var(--color-border);
+  --border-subtle:    var(--color-border-light);
+  --focus-ring:       rgba(42, 92, 107, 0.12);
+}

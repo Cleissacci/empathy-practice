@@ -1,0 +1,5 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lumina mark, reversed">
+  <circle cx="24" cy="24" r="23" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"></circle>
+  <path d="M8 24 C11 20, 14 16, 17 24 C20 32, 23 28, 24 24 C25 20, 28 16, 31 24 C34 32, 37 28, 40 24" stroke="#C4956A" stroke-width="2" stroke-linecap="round" fill="none"></path>
+  <circle cx="24" cy="24" r="3" fill="#fff"></circle>
+</svg>

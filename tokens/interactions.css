@@ -1,0 +1,52 @@
+/* ─────────────────────────────────────────────────────
+   INTERACTION TOKENS — Lumina Psychology
+   Animated hover border: a soft teal→amber gradient line
+   that flows around the button edge on hover. Brand-aligned,
+   calm, and free of any custom-property declarations.
+───────────────────────────────────────────────────── */
+
+.lum-anim-border {
+  position: relative;
+}
+
+.lum-anim-border::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    115deg,
+    var(--color-accent),
+    var(--color-accent-light),
+    var(--color-primary-light),
+    var(--color-accent)
+  );
+  background-size: 300% 100%;
+  background-position: 0% 50%;
+  /* Mask to just the border ring (follows border-radius: inherit) */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lum-anim-border:hover::after,
+  .lum-anim-border:focus-visible::after {
+    opacity: 1;
+    animation: lum-border-flow 2.2s linear infinite;
+  }
+}
+
+/* Reduced motion: show the gradient line softly, no flow */
+@media (prefers-reduced-motion: reduce) {
+  .lum-anim-border:hover::after { opacity: 0.9; }
+}
+
+@keyframes lum-border-flow {
+  to { background-position: 300% 50%; }
+}

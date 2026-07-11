@@ -1,0 +1,20 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Border Radius" subtitle="Nothing in Lumina has a sharp corner" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+  body { margin: 0; background: var(--color-surface); font-family: var(--font-body); padding: 24px; }
+  .row { display: flex; gap: 22px; align-items: flex-end; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .box { width: 60px; height: 60px; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light)); }
+  .nm { font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); text-align: center; }
+</style></head>
+<body>
+  <div class="row">
+    <div class="item"><div class="box" style="border-radius:4px"></div><div class="nm">--radius-sm<br>4px</div></div>
+    <div class="item"><div class="box" style="border-radius:8px"></div><div class="nm">--radius-md<br>8px</div></div>
+    <div class="item"><div class="box" style="border-radius:12px"></div><div class="nm">--radius-lg<br>12px</div></div>
+    <div class="item"><div class="box" style="border-radius:16px"></div><div class="nm">--radius-xl<br>16px</div></div>
+    <div class="item"><div class="box" style="border-radius:24px"></div><div class="nm">--radius-2xl<br>24px</div></div>
+    <div class="item"><div class="box" style="border-radius:9999px"></div><div class="nm">--radius-full<br>pill</div></div>
+  </div>
+</body></html>

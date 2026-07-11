@@ -1,0 +1,7 @@
+<svg width="220" height="48" viewBox="0 0 220 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lumina Psychology">
+  <circle cx="24" cy="24" r="23" stroke="#2A5C6B" stroke-width="1.5"></circle>
+  <path d="M8 24 C11 20, 14 16, 17 24 C20 32, 23 28, 24 24 C25 20, 28 16, 31 24 C34 32, 37 28, 40 24" stroke="#C4956A" stroke-width="2" stroke-linecap="round" fill="none"></path>
+  <circle cx="24" cy="24" r="3" fill="#2A5C6B"></circle>
+  <text x="60" y="26" font-family="&#39;Cormorant Garamond&#39;, Georgia, serif" font-size="26" font-weight="400" letter-spacing="1" fill="#1A2E35">Lumina</text>
+  <text x="61" y="39" font-family="&#39;Nunito&#39;, sans-serif" font-size="8.5" font-weight="700" letter-spacing="2.4" fill="#9BA8AB">PSYCHOLOGY</text>
+</svg>

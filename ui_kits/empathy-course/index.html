@@ -1,0 +1,120 @@
+<!-- @dsCard group="Empathy Course" viewport="1280x800" name="Empathy Course — Learner App" subtitle="Sign in → learn lessons, quizzes & reflections → certificate" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina — Empathy Course</title>
+<link rel="stylesheet" href="../../styles.css">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: var(--font-body); background: var(--color-bg); color: var(--color-text-primary); -webkit-font-smoothing: antialiased; }
+  #root { height: 100vh; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 999px; border: 2px solid var(--color-bg); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="data.js"></script>
+<script src="store.js"></script>
+<script src="icons.jsx" type="text/babel"></script>
+<script src="Sidebar.jsx" type="text/babel"></script>
+<script src="LoginScreen.jsx" type="text/babel"></script>
+<script src="DashboardScreen.jsx" type="text/babel"></script>
+<script src="LessonPlayer.jsx" type="text/babel"></script>
+<script src="screens.jsx" type="text/babel"></script>
+<script type="text/babel" data-presets="react">
+const { useState } = React;
+const S = window.LuminaStore;
+const D = window.LuminaData;
+
+function App() {
+  const [route, setRoute] = useState('login');     // login | app
+  const [nav, setNav] = useState('dashboard');      // dashboard | reflections | sessions | certificate
+  const [view, setView] = useState('dashboard');    // dashboard | lesson
+  const [moduleId, setModuleId] = useState(null);
+  const [startIndex, setStartIndex] = useState(0);
+  const [state, setState] = useState(() => S.load());
+
+  function persist(next) { setState(next); S.save(next); }
+
+  function openModule(id) {
+    const m = D.modules.find((x) => x.id === id);
+    setModuleId(id);
+    setStartIndex(S.resumeLessonIndex(state, m));
+    setView('lesson');
+    setNav('dashboard');
+  }
+
+  function completeLesson(lessonId) {
+    persist({ ...state, completed: { ...state.completed, [lessonId]: true } });
+  }
+
+  function saveReflection(r) {
+    const others = state.reflections.filter((x) => x.lessonId !== r.lessonId);
+    persist({ ...state, reflections: [...others, { ...r, date: 'Today' }] });
+  }
+
+  function goNav(key) {
+    setNav(key);
+    setView('dashboard');
+  }
+
+  if (route === 'login') {
+    return <window.LoginScreen onSignIn={() => { setRoute('app'); setNav('dashboard'); setView('dashboard'); }} />;
+  }
+
+  const modules = D.modules;
+  const allDone = modules.every((m) => S.moduleDone(state, m));
+  const activeMod = modules.find((m) => m.id === moduleId) || S.activeModule(state, modules);
+
+  let main;
+  if (view === 'lesson') {
+    main = (
+      <window.LessonPlayer
+        module={activeMod}
+        startIndex={startIndex}
+        state={state}
+        onCompleteLesson={completeLesson}
+        onSaveReflection={saveReflection}
+        onBack={() => { setView('dashboard'); setNav('dashboard'); }}
+        onGoModule={(id) => openModule(id)}
+      />
+    );
+  } else if (nav === 'reflections') {
+    main = <window.ReflectionsScreen state={state} />;
+  } else if (nav === 'sessions') {
+    main = <window.SessionsScreen />;
+  } else if (nav === 'certificate') {
+    main = <window.CertificateScreen state={state} allDone={allDone} onResume={() => openModule(S.activeModule(state, modules).id)} />;
+  } else {
+    main = (
+      <window.DashboardScreen
+        state={state}
+        onOpenModule={openModule}
+        onWriteReflection={() => goNav('reflections')}
+      />
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', height: '100%' }}>
+      <window.Sidebar
+        active={nav}
+        onNavigate={goNav}
+        onLogout={() => { setRoute('login'); setView('dashboard'); setNav('dashboard'); }}
+      />
+      {main}
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

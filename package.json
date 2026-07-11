@@ -1,0 +1,9 @@
+{
+  "name": "empathy-practice",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Empathy Practice — Lumina e-learning with AI-powered roleplays (Gemini via a Vercel serverless function).",
+  "engines": {
+    "node": ">=18"
+  }
+}

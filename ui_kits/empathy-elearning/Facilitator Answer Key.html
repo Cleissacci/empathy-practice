@@ -1,0 +1,276 @@
+<!-- @dsCard group="Empathy Course" viewport="820x1160" name="Facilitator Answer Key" subtitle="Printable model-response key for the four empathy roleplay simulations" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Empathy Practice — Facilitator Answer Key</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    margin: 0; background: var(--color-bg); color: var(--color-text-primary);
+    font-family: var(--font-body); line-height: var(--leading-normal);
+  }
+  .page {
+    max-width: 820px; margin: 0 auto; padding: 56px clamp(20px, 5vw, 60px) 80px;
+  }
+
+  /* ── Masthead ── */
+  .mast { border-bottom: 2px solid var(--color-primary); padding-bottom: 22px; margin-bottom: 34px; }
+  .mast .kicker {
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--color-accent); margin: 0 0 12px;
+  }
+  .mast h1 {
+    font-family: var(--font-display); font-weight: 500; font-size: clamp(34px, 6vw, 52px);
+    line-height: 1.05; margin: 0 0 10px; color: var(--color-primary);
+  }
+  .mast p { margin: 0; font-size: 16px; color: var(--color-text-secondary); max-width: 60ch; }
+
+  .conf {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 18px;
+    background: var(--color-warm-rose-sub); color: var(--color-warm-rose);
+    border-radius: 999px; padding: 6px 14px; font-size: 12.5px; font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .conf svg { width: 14px; height: 14px; }
+
+  /* ── How-to note ── */
+  .note {
+    background: var(--color-surface); border: 1px solid var(--color-border-light);
+    border-left: 3px solid var(--color-accent); border-radius: 12px;
+    padding: 18px 22px; margin-bottom: 38px;
+  }
+  .note h2 {
+    font-family: var(--font-body); font-size: 13px; font-weight: 800; letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--color-text-secondary); margin: 0 0 8px;
+  }
+  .note p { margin: 0 0 8px; font-size: 14.5px; line-height: 1.6; color: var(--color-text-secondary); }
+  .note p:last-child { margin-bottom: 0; }
+
+  /* ── Simulation card ── */
+  .sim { margin-bottom: 40px; break-inside: avoid; }
+  .sim-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; }
+  .sim-num {
+    font-family: var(--font-display); font-size: 40px; font-weight: 500; line-height: 1;
+    color: var(--color-primary-muted); flex-shrink: 0;
+  }
+  .sim-title { font-family: var(--font-display); font-size: 30px; font-weight: 500; color: var(--color-primary); margin: 0; line-height: 1.1; }
+  .sim-skill {
+    display: inline-block; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--color-accent); margin: 2px 0 0 54px;
+  }
+  .sim-meta { margin: 4px 0 18px 54px; font-size: 14px; color: var(--color-text-muted); }
+  .sim-body { margin-left: 54px; }
+  @media (max-width: 560px) {
+    .sim-skill, .sim-meta, .sim-body { margin-left: 0; }
+  }
+
+  /* prompt + response */
+  .prompt {
+    font-family: var(--font-display); font-style: italic; font-size: 19px; line-height: 1.4;
+    color: var(--color-text-secondary); margin: 0 0 14px; padding-left: 16px;
+    border-left: 2px solid var(--color-border);
+  }
+  .phase-label {
+    font-size: 12.5px; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase;
+    color: var(--color-text-muted); margin: 22px 0 8px;
+  }
+  .model {
+    background: var(--color-primary); color: var(--color-text-inverse);
+    border-radius: 14px; border-bottom-left-radius: 4px; padding: 16px 20px;
+    font-size: 16px; line-height: 1.6; margin: 0 0 14px;
+  }
+  .model .who {
+    display: block; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--color-primary-subtle); margin-bottom: 7px;
+  }
+
+  /* rubric chips */
+  .checks { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 0; }
+  .chk {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--color-success-sub); color: #20655a;
+    border-radius: 8px; padding: 6px 11px; font-size: 13px; font-weight: 600; line-height: 1.3;
+  }
+  .chk svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+  .avoid {
+    margin: 14px 0 0; font-size: 14px; line-height: 1.55; color: var(--color-warm-rose);
+    background: var(--color-warm-rose-sub); border-radius: 10px; padding: 11px 15px;
+  }
+  .avoid strong { font-weight: 800; }
+
+  .divider { border: none; border-top: 1px solid var(--color-border); margin: 0 0 40px; }
+
+  .foot {
+    margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--color-border);
+    font-size: 12.5px; color: var(--color-text-muted); font-family: var(--font-mono); letter-spacing: 0.03em;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page { padding: 0 0 20px; max-width: none; }
+    .sim, .note { break-inside: avoid; }
+    .no-print { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<template id="__bundler_thumbnail">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" fill="#2A5C6B"/>
+  <rect x="30" y="22" width="40" height="52" rx="3" fill="#F7F4F0"/>
+  <line x1="37" y1="33" x2="63" y2="33" stroke="#C4956A" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="37" y1="42" x2="63" y2="42" stroke="#DDD8D2" stroke-width="2" stroke-linecap="round"/>
+  <line x1="37" y1="49" x2="57" y2="49" stroke="#DDD8D2" stroke-width="2" stroke-linecap="round"/>
+  <polyline points="38 61 43 66 53 56" fill="none" stroke="#4A9B8A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</template>
+<div class="page">
+
+  <header class="mast">
+    <p class="kicker">The Empathy Practice · Facilitator Resource</p>
+    <h1>Model Response Key</h1>
+    <p>Exemplar answers for the four AI roleplay simulations. Each one demonstrates the target skill and satisfies every item on its empathy rubric.</p>
+    <span class="conf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Facilitator copy — not for learners
+    </span>
+  </header>
+
+  <section class="note">
+    <h2>How to use this</h2>
+    <p>The simulations are <strong>live, unscripted conversations</strong> — the AI character responds to whatever the learner actually says, so there is no single correct script. These models show <em>one</em> strong way to meet each rubric, useful for calibrating scores, debriefing learners, or demonstrating the skill.</p>
+    <p>Character names differ by mode: the workplace <em>Story mode</em> uses Maya, Devon, Priya and Theo; standard mode uses the same first three names and Riley for the capstone. The responses below apply to either.</p>
+  </section>
+
+  <!-- 1 -->
+  <article class="sim">
+    <div class="sim-head">
+      <span class="sim-num">01</span>
+      <h2 class="sim-title">The last-minute cancel</h2>
+    </div>
+    <div class="sim-skill">Perspective Taking · The generous interpretation</div>
+    <p class="sim-meta">Maya texts to cancel your plans an hour before.</p>
+    <div class="sim-body">
+      <p class="prompt">“Hey… I can’t make it tonight. I’m so sorry to do this last minute.”</p>
+      <div class="model">
+        <span class="who">Model learner response</span>
+        No worries at all, Maya — honestly, don’t stress about it. You’d been looking forward to this too, so I figure something must’ve come up. Everything okay on your end? I’m around if you want to talk, and we’ll find another night.
+      </div>
+      <div class="checks">
+        <span class="chk" data-c>Doesn’t assume a slight</span>
+        <span class="chk" data-c>Leads with warmth</span>
+        <span class="chk" data-c>Curious about the unseen</span>
+        <span class="chk" data-c>Keeps the door open</span>
+      </div>
+      <p class="avoid"><strong>Avoid:</strong> “Wow, again?” / scorekeeping / silently deciding they don’t value you.</p>
+    </div>
+  </article>
+  <hr class="divider">
+
+  <!-- 2 -->
+  <article class="sim">
+    <div class="sim-head">
+      <span class="sim-num">02</span>
+      <h2 class="sim-title">Feeling overlooked</h2>
+    </div>
+    <div class="sim-skill">Active Listening · Reflecting</div>
+    <p class="sim-meta">Devon, voice tight, says his work goes unseen.</p>
+    <div class="sim-body">
+      <p class="prompt">“I just feel like… no one even reads my reports.”</p>
+      <div class="model">
+        <span class="who">Model learner response</span>
+        That sounds really discouraging — like you’re putting real care into them and it’s just disappearing into a void. It’s been getting to you, hasn’t it? Tell me more about what that’s been like.
+      </div>
+      <div class="checks">
+        <span class="chk" data-c>Names the feeling</span>
+        <span class="chk" data-c>No quick reassurance</span>
+        <span class="chk" data-c>Holds off on fixing</span>
+        <span class="chk" data-c>Shows he was received</span>
+      </div>
+      <p class="avoid"><strong>Avoid:</strong> “I’m sure people read them” (reassurance) / “Try making them shorter” (jumping to fix).</p>
+    </div>
+  </article>
+  <hr class="divider">
+
+  <!-- 3 -->
+  <article class="sim">
+    <div class="sim-head">
+      <span class="sim-num">03</span>
+      <h2 class="sim-title">The heat of the moment</h2>
+    </div>
+    <div class="sim-skill">Difficult Conversations · Regulate, then relate</div>
+    <p class="sim-meta">Priya challenges your decision sharply, in front of the team.</p>
+    <div class="sim-body">
+      <p class="prompt">“I don’t agree with this call, and I don’t think you ran it past any of us first.”</p>
+      <div class="model">
+        <span class="who">Model learner response</span>
+        Okay — let me take a breath, because I can feel myself getting defensive and I don’t want to react from there. You’re right that I moved on this without looping you in, and I can see why that landed badly. Help me understand what you’re most worried about — I genuinely want to hear it.
+      </div>
+      <div class="checks">
+        <span class="chk" data-c>Regulates self first</span>
+        <span class="chk" data-c>Doesn’t escalate</span>
+        <span class="chk" data-c>Turns toward</span>
+        <span class="chk" data-c>Acknowledges her view</span>
+      </div>
+      <p class="avoid"><strong>Avoid:</strong> pressing your point harder / matching her volume / defending before you’ve steadied yourself.</p>
+    </div>
+  </article>
+  <hr class="divider">
+
+  <!-- 4 -->
+  <article class="sim">
+    <div class="sim-head">
+      <span class="sim-num">04</span>
+      <h2 class="sim-title">Passed over</h2>
+    </div>
+    <div class="sim-skill">Capstone · All three skills, one conversation</div>
+    <p class="sim-meta">Riley (or Theo) was passed over for a role you helped decide. The conversation moves through three phases — a strong run meets the rubric in each.</p>
+    <div class="sim-body">
+      <p class="phase-label">Phase 1 · They arrive guarded</p>
+      <div class="model">
+        <span class="who">Model learner response</span>
+        I’m really glad you came to me. I can only imagine how this landed, especially after everything you’ve poured in. I’m not here to defend anything — I just want to hear you.
+      </div>
+
+      <p class="phase-label">Phase 2 · They open up</p>
+      <div class="model">
+        <span class="who">Model learner response</span>
+        It sounds like this isn’t only about the role — it’s the worry that the work, and you, might be invisible here. That’s a heavy thing to be carrying.
+      </div>
+
+      <p class="phase-label">Phase 3 · The challenge — “Did you even advocate for me?”</p>
+      <div class="model">
+        <span class="who">Model learner response</span>
+        That’s a fair question, and you deserve a straight answer. I did advocate for you — and I also should have spoken with you before the announcement, not after. That part’s on me. I don’t want to lose you, and I want to be honest about where things actually stand.
+      </div>
+
+      <div class="checks">
+        <span class="chk" data-c>Held a generous interpretation</span>
+        <span class="chk" data-c>Stayed curious</span>
+        <span class="chk" data-c>Named the feeling underneath</span>
+        <span class="chk" data-c>Didn’t rush to fix</span>
+        <span class="chk" data-c>Stayed regulated under pressure</span>
+        <span class="chk" data-c>Turned toward & acknowledged</span>
+      </div>
+      <p class="avoid"><strong>Avoid:</strong> justifying the decision early / pep-talking the hurt away / pulling rank or getting defensive when challenged. Passing the capstone needs <strong>70%+</strong>.</p>
+    </div>
+  </article>
+
+  <p class="foot">Lumina Psychology · The Empathy Practice · Facilitator Answer Key</p>
+
+</div>
+
+<script>
+  // Stamp every rubric chip with a check icon (kept out of source for cleaner markup).
+  var ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  document.querySelectorAll('.chk[data-c]').forEach(function (el) {
+    el.insertAdjacentHTML('afterbegin', ICON);
+  });
+</script>
+</body>
+</html>

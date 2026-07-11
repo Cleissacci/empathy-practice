@@ -1,0 +1,18 @@
+<!-- @dsCard group="Spacing" viewport="700x170" name="Elevation — Shadows" subtitle="Soft, warm-tinted · never harsh or clinical" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+  body { margin: 0; background: var(--color-bg); font-family: var(--font-body); padding: 28px; }
+  .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  .item { background: var(--color-surface); border-radius: var(--radius-lg); padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .nm { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-secondary); }
+  .desc { font-size: 11px; color: var(--color-text-muted); text-align: center; }
+</style></head>
+<body>
+  <div class="row">
+    <div class="item" style="box-shadow:var(--shadow-sm)"><div class="nm">shadow-sm</div><div class="desc">Cards, inputs</div></div>
+    <div class="item" style="box-shadow:var(--shadow-md)"><div class="nm">shadow-md</div><div class="desc">Hover, dropdowns</div></div>
+    <div class="item" style="box-shadow:var(--shadow-lg)"><div class="nm">shadow-lg</div><div class="desc">Modals, panels</div></div>
+    <div class="item" style="box-shadow:var(--shadow-xl)"><div class="nm">shadow-xl</div><div class="desc">Hero, overlays</div></div>
+  </div>
+</body></html>
