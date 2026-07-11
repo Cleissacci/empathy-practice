@@ -1396,7 +1396,7 @@
         onChange({ ...st, messages: full });
         setBusy(false);
         maybeAutoEnd(full);
-      } catch (e) { setErr(c.name + ' didn\u2019t reply \u2014 try again in a moment.'); setBusy(false); }
+      } catch (e) { setErr(c.name + ' didn\u2019t reply (' + (e.message || 'try again in a moment') + ').'); setBusy(false); }
     }
 
     // After a turn lands, check whether the learner has now met the whole rubric
