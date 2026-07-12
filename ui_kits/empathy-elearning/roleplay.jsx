@@ -854,7 +854,7 @@
       <div style={{ display: 'flex', gap: 14, background: 'var(--color-surface-alt)', border: '1px solid var(--color-border-light)', borderRadius: 'var(--radius-xl)', padding: '16px 18px', marginBottom: 16 }}>
         {React.createElement('image-slot', {
           id: 'rp-portrait-' + (c.name || 'partner'),
-          src: slide.photoSrc || undefined, shape: 'circle', fit: 'cover',
+          src: slide.photoSrc || ('assets/images/portrait_' + String(c.name || 'partner').toLowerCase() + '.png'), shape: 'circle', fit: 'cover',
           placeholder: c.name ? c.name + '\u2019s photo' : 'Add a face',
           style: { width: 56, height: 56, flexShrink: 0, display: 'block', boxShadow: '0 0 0 1px var(--color-border-light)', borderRadius: '50%' },
         })}
