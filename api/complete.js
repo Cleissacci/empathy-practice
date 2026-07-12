@@ -57,20 +57,41 @@ export default async function handler(req, res) {
 
   const jsonMode = prompt.includes('JSON');
 
+  // Disable "thinking" — for short roleplay replies and grading JSON it adds
+  // latency (the ~3s the user saw) and, worse, consumes the output-token budget,
+  // which truncated replies mid-sentence and cut grading JSON off (causing the
+  // "Unexpected end of JSON input" feedback error). Grading needs a larger budget
+  // than a chat reply, so size it by mode.
+  const genConfig = {
+    temperature: 0.7,
+    maxOutputTokens: jsonMode ? 2048 : 512,
+    thinkingConfig: { thinkingBudget: 0 },
+  };
+  if (jsonMode) genConfig.responseMimeType = 'application/json';
+
+  // One transient-failure retry: a rapid burst of narration/reply/grading calls
+  // can trip Gemini's per-minute rate limit (429/503), which surfaced as 502s.
+  async function callGemini() {
+    let last = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: genConfig,
+          safetySettings,
+        }),
+      });
+      if (r.ok || (r.status !== 429 && r.status !== 503 && r.status !== 500)) return r;
+      last = r;
+      await new Promise((res) => setTimeout(res, 700)); // brief backoff, then retry once
+    }
+    return last;
+  }
+
   try {
-    const upstream = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 512,
-          ...(jsonMode ? { responseMimeType: 'application/json' } : {}),
-        },
-        safetySettings,
-      }),
-    });
+    const upstream = await callGemini();
 
     const data = await upstream.json().catch(() => ({}));
 

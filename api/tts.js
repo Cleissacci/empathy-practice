@@ -61,18 +61,34 @@ export default async function handler(req, res) {
     ':generateContent?key=' +
     encodeURIComponent(apiKey);
 
+  const reqBody = JSON.stringify({
+    contents: [{ role: 'user', parts: [{ text: 'Say the following text clearly:\n' + text }] }],
+    generationConfig: {
+      responseModalities: ['AUDIO'],
+      speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
+    },
+  });
+
+  // One transient-failure retry: narration fires many TTS calls in quick
+  // succession, which can trip Gemini's per-minute rate limit (429/503) and
+  // surface as 502s / silent narration.
+  async function callGemini() {
+    let last = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: reqBody,
+      });
+      if (r.ok || (r.status !== 429 && r.status !== 503 && r.status !== 500)) return r;
+      last = r;
+      await new Promise((res) => setTimeout(res, 700));
+    }
+    return last;
+  }
+
   try {
-    const upstream = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: 'Say the following text clearly:\n' + text }] }],
-        generationConfig: {
-          responseModalities: ['AUDIO'],
-          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } },
-        },
-      }),
-    });
+    const upstream = await callGemini();
 
     const data = await upstream.json().catch(() => ({}));
     if (!upstream.ok) {
