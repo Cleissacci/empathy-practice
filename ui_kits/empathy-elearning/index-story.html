@@ -300,6 +300,14 @@ function App() {
     }, 70);
   }
   function speakCurrent() { speakText(COURSE.narrationFor(sl)); }
+  // Narration text for an arbitrary slide index (for prefetching), '' if the
+  // slide has no auto-narration (cover/complete/roleplay/capstone).
+  function narrationForIndex(i) {
+    const s = SLIDES[i];
+    if (!s || s.type === 'cover' || s.type === 'complete' || s.type === 'roleplay' || s.type === 'capstone') return '';
+    const merged = (p.story && COURSE.story[s.id]) ? { ...s, ...COURSE.story[s.id] } : s;
+    try { return COURSE.narrationFor(merged) || ''; } catch (e) { return ''; }
+  }
   // Auto-narrate on slide change (skip immersive cover/complete which have no chrome)
   useEffect(() => {
     if (!canSpeak) return undefined;
@@ -315,11 +323,25 @@ function App() {
       if (p.narrated && p.narrated[slide.id]) {
         return () => { stopNarration(); };
       }
-      const t = setTimeout(speakCurrent, 300);
+      // Short settle after the slide-change transition; the audio is usually
+      // already prefetched (see below), so playback starts near-instantly.
+      const t = setTimeout(speakCurrent, 150);
       setP((prev) => ({ ...prev, narrated: { ...(prev.narrated || {}), [slide.id]: true } }));
       return () => { clearTimeout(t); stopNarration(); };
     }
     return () => { stopNarration(); };
+  }, [index, muted, p.story]);
+  // Prefetch the next couple of slides' narration while the current one plays,
+  // so advancing plays with no generation wait. Cache lives in ai-backend.js.
+  useEffect(() => {
+    if (muted || !hasAITTS() || !window.claude.ttsPrefetch) return;
+    const t = setTimeout(() => {
+      [index + 1, index + 2].forEach((i) => {
+        const txt = narrationForIndex(i);
+        if (txt) window.claude.ttsPrefetch(txt, NARRATOR_VOICE);
+      });
+    }, 500);
+    return () => clearTimeout(t);
   }, [index, muted, p.story]);
   useEffect(() => () => { stopNarration(); }, []);
 

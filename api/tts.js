@@ -45,18 +45,18 @@ export default async function handler(req, res) {
 
   let text = '';
   let voice = 'Kore';
-  let bodyModel = '';
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     text = String(body.text == null ? '' : body.text).trim();
     if (body.voice) voice = String(body.voice);
-    if (body.model && /^gemini-/.test(String(body.model))) bodyModel = String(body.model); // TEMP: benchmarking
   } catch (e) {
     return res.status(400).json({ error: 'Invalid JSON body.' });
   }
   if (!text) return res.status(400).json({ error: 'Missing "text".' });
 
-  const model = (bodyModel || process.env.GEMINI_TTS_MODEL || 'gemini-2.5-flash-preview-tts').trim();
+  // gemini-2.5-flash-preview-tts benchmarked marginally faster than the 3.1 TTS
+  // preview and is stable. TTS is non-streaming, so latency scales with length.
+  const model = (process.env.GEMINI_TTS_MODEL || 'gemini-2.5-flash-preview-tts').trim();
   const url =
     'https://generativelanguage.googleapis.com/v1beta/models/' +
     encodeURIComponent(model) +

@@ -687,6 +687,11 @@
     const [paused, setPaused] = React.useState(false);
     const [done, setDone] = React.useState(false);
     const DWELL = 3800;
+    // The walkthrough is narrated by the engine's narrator voice (must match
+    // NARRATOR_VOICE in index-story.html). Warm each line's audio ahead of time
+    // so steps play with no generation wait; failures are ignored.
+    const NARRATOR_VOICE = 'Sulafat';
+    function prefetchNarr(t) { try { if (t && window.claude && window.claude.ttsPrefetch) window.claude.ttsPrefetch(t, NARRATOR_VOICE); } catch (e) {} }
 
     // Intro: narrate the context, then roll into the control tour.
     React.useEffect(() => {
@@ -694,8 +699,12 @@
       let cancelled = false;
       const toTour = () => { if (!cancelled) setPhase('tour'); };
       if (canNarrate && narrate) {
+        prefetchNarr(STEPS[0].say); // warm the first tour step while the intro plays
         narrate(introSay, () => { if (!cancelled) toTour(); });
-        const fb = setTimeout(toTour, Math.max(5200, introSay.length * 80));
+        // Generous safety net ONLY — the advance is normally driven by the audio's
+        // own end event. It must exceed TTS generation (~3-8s) + speech so it can
+        // never fire early and cut the audio when the step changes.
+        const fb = setTimeout(toTour, Math.max(12000, 4000 + introSay.length * 90));
         return () => { cancelled = true; clearTimeout(fb); };
       }
       const t = setTimeout(toTour, 4200);
@@ -709,9 +718,11 @@
       let cancelled = false;
       const advance = () => { if (cancelled) return; if (step >= STEPS.length - 1) setDone(true); else setStep((s) => s + 1); };
       if (canNarrate && narrate) {
+        if (STEPS[step + 1]) prefetchNarr(STEPS[step + 1].say); // warm the next step so it plays instantly
         narrate(STEPS[step].say, () => { if (!cancelled) advance(); });
-        // safety net if the speech engine drops the utterance's end event
-        const fb = setTimeout(advance, Math.max(4200, STEPS[step].say.length * 95));
+        // Generous safety net ONLY — advance is normally driven by the audio's end
+        // event. Must exceed TTS generation + speech so it can't cut the audio.
+        const fb = setTimeout(advance, Math.max(9000, 4000 + STEPS[step].say.length * 90));
         return () => { cancelled = true; clearTimeout(fb); };
       }
       const t = setTimeout(advance, DWELL);
@@ -1520,7 +1531,9 @@
         let shown = false;
         const reveal = () => { if (!shown) { shown = true; setCallReady(true); } };
         onNarrate(brief, reveal);
-        setTimeout(reveal, Math.max(6000, brief.length * 80));
+        // Generous safety net — reveal is normally driven by the brief audio's end
+        // event; must exceed TTS generation + speech so it can't cut the audio.
+        setTimeout(reveal, Math.max(10000, 4000 + brief.length * 90));
       } else {
         setTimeout(() => setCallReady(true), 600);
       }
