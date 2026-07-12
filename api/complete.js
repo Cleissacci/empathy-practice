@@ -13,7 +13,7 @@
 //
 // Env vars (set in Vercel → Project → Settings → Environment Variables):
 //   GEMINI_API_KEY  (required)  your Google AI Studio / Gemini API key
-//   GEMINI_MODEL    (optional)  defaults to "gemini-3.5-flash"
+//   GEMINI_MODEL    (optional)  defaults to "gemini-3.1-flash-lite" (fast)
 // ════════════════════════════════════════════════════════════════
 
 export default async function handler(req, res) {
@@ -31,17 +31,18 @@ export default async function handler(req, res) {
 
   // Parse the prompt from the JSON body (Vercel usually parses it for us).
   let prompt = '';
-  let bodyModel = '';
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     prompt = String(body.prompt == null ? '' : body.prompt);
-    if (body.model && /^gemini-/.test(String(body.model))) bodyModel = String(body.model); // TEMP: benchmarking override
   } catch (e) {
     return res.status(400).json({ error: 'Invalid JSON body.' });
   }
   if (!prompt.trim()) return res.status(400).json({ error: 'Missing "prompt".' });
 
-  const model = (bodyModel || process.env.GEMINI_MODEL || 'gemini-2.5-flash').trim();
+  // gemini-3.1-flash-lite: ~1.2s and complete answers. The 2.x flash models are
+  // retired for new keys (404), and gemini-3.5-flash / gemini-3-flash-preview run
+  // ~5-6s because they "think" and ignore thinkingBudget:0. Lite is the fast tier.
+  const model = (process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite').trim();
   const url =
     'https://generativelanguage.googleapis.com/v1beta/models/' +
     encodeURIComponent(model) +
