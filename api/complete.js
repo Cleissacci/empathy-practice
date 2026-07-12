@@ -31,15 +31,17 @@ export default async function handler(req, res) {
 
   // Parse the prompt from the JSON body (Vercel usually parses it for us).
   let prompt = '';
+  let bodyModel = '';
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     prompt = String(body.prompt == null ? '' : body.prompt);
+    if (body.model && /^gemini-/.test(String(body.model))) bodyModel = String(body.model); // TEMP: benchmarking override
   } catch (e) {
     return res.status(400).json({ error: 'Invalid JSON body.' });
   }
   if (!prompt.trim()) return res.status(400).json({ error: 'Missing "prompt".' });
 
-  const model = (process.env.GEMINI_MODEL || 'gemini-3.5-flash').trim();
+  const model = (bodyModel || process.env.GEMINI_MODEL || 'gemini-2.5-flash').trim();
   const url =
     'https://generativelanguage.googleapis.com/v1beta/models/' +
     encodeURIComponent(model) +
