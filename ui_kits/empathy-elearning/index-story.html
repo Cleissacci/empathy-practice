@@ -245,8 +245,10 @@ function App() {
       try { if (a.src) URL.revokeObjectURL(a.src); } catch (e) {}
     }
   }
-  // Dispatcher: prefer the natural Gemini narrator voice; fall back to the
-  // browser voice on any failure. An empty text just stops narration.
+  // Narration engine: Gemini TTS is the sole voice on the deployed site. The
+  // browser voice is used ONLY when Gemini TTS isn't available at all (local
+  // file:// / Claude preview) — never as a mid-session fallback, so the narrator
+  // voice never switches partway through. An empty text just stops narration.
   function speakText(text, onEnd) {
     stopNarration();
     if (muted || !text) return;
@@ -271,11 +273,11 @@ function App() {
       };
       a.onended = () => done(true);
       a.onerror = () => done(true);
-      a.play().catch(() => { done(false); speakTextBrowser(text, onEnd); }); // autoplay blocked, etc.
+      a.play().catch(() => { done(true); }); // autoplay blocked — continue, no browser fallback
     } catch (e) {
       if (narrGenRef.current !== gen) return; // superseded — let the newer narration own it
-      setSpeaking(false);
-      speakTextBrowser(text, onEnd); // network / API failure — use the browser voice
+      setSpeaking(false); // Gemini TTS failed; narration stays silent for this line by design
+      if (onEnd) onEnd();
     }
   }
   function speakTextBrowser(text, onEnd) {

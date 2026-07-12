@@ -1013,12 +1013,11 @@
           setSpeaking(false);
         };
         a.onended = done;
-        a.onerror = () => { done(); speakBrowser(text); }; // fall back if playback fails
-        a.play().catch(() => { done(); speakBrowser(text); }); // autoplay blocked, etc.
+        a.onerror = () => { done(); }; // Gemini-only: no browser fallback mid-call
+        a.play().catch(() => { done(); }); // autoplay blocked — no browser fallback
       } catch (e) {
         if (aiGenRef.current !== gen) return; // superseded — let the newer line own it
-        setSpeaking(false);
-        speakBrowser(text); // network / API failure — use the browser voice
+        setSpeaking(false); // Gemini TTS failed; stay silent for this line by design
       }
     }
     function speakBrowser(text) {
@@ -1473,8 +1472,17 @@
       if (onNarrate) onNarrate('');
       if (hasTTS) { try { window.speechSynthesis.cancel(); } catch (e) {} }
       setGrading(true); setErr(null);
+      let fb = null;
       try {
-        const fb = await (slide.capstone ? gradeCapstone : gradeConversation)(slide, msgs);
+        fb = await (slide.capstone ? gradeCapstone : gradeConversation)(slide, msgs);
+      } catch (e) {
+        // AI grade failed (rate limit, truncated JSON, etc.) \u2014 grade locally so the
+        // learner always gets feedback instead of a dead end.
+        console.error('AI grading failed, using offline scorer:', e);
+        try { fb = slide.capstone ? window.ScriptedRoleplay.gradeCapstone(slide, msgs) : window.ScriptedRoleplay.grade(slide, msgs); }
+        catch (e2) { fb = null; }
+      }
+      if (fb) {
         if (slide.capstone) {
           const attempts = (st.attempts || 0) + 1;
           const bestScore = Math.max(st.bestScore | 0, fb.score | 0);
@@ -1482,9 +1490,8 @@
         } else {
           onChange({ ...st, messages: msgs, ended: true, feedback: fb });
         }
-      } catch (e) {
-        console.error('Grading failed:', e);
-        setErr('The feedback didn\u2019t come through (' + (e.message || 'try ending again') + ').');
+      } else {
+        setErr('The feedback didn\u2019t come through \u2014 tap End again.');
       }
       setGrading(false);
     }
